@@ -19,6 +19,7 @@ int main(int ac, char** av) {
     std::string out_file = "out.png";
     uint32_t element_size = 4;
     bool is_real = true;
+    bool is_unsigned = false;
     bool is_output_file = false;
     uint32_t pitch = 0;
     try {
@@ -30,7 +31,6 @@ int main(int ac, char** av) {
 	    ("output-file,o", value<std::string>(), "output file (image)")
 	    ("int32", "data is integer 32 bits")
 	    ("int16", "data is integer 16 bits")
-	    ("int8", "data is integer 8 bits")
 	    ("float32", "data is float 32 bits")
 	    ("pitch", value<uint32_t>(), "pitch (length of a line)");
 	variables_map vm;
@@ -52,10 +52,6 @@ int main(int ac, char** av) {
 	}
 	if (vm.count("int32")) {
 	    element_size = 4;
-	    is_real = false;
-	}
-	if (vm.count("int8")) {
-	    element_size = 1;
 	    is_real = false;
 	}
 	if (vm.count("float32")) {
