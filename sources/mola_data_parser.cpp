@@ -8,7 +8,8 @@
 #include <opencv.hpp>
 
 #include "mola_data.hpp"
-#include "glut_win.h"
+#include "win_interface.hpp"
+#include "glut_window.h"
 #include "win_mola_data.h"
 
 using namespace boost::program_options;
@@ -30,7 +31,9 @@ int main(int ac, char** av) {
 	    ("input-file,i", value<std::string>(), "input file (data from MOLA)")
 	    ("output-file,o", value<std::string>(), "output file (image)")
 	    ("int32", "data is integer 32 bits")
+	    ("uint32", "data is unsigned integer 32 bits")
 	    ("int16", "data is integer 16 bits")
+	    ("uint16", "data is unsigned integer 16 bits")
 	    ("float32", "data is float 32 bits")
 	    ("pitch", value<uint32_t>(), "pitch (length of a line)");
 	variables_map vm;
@@ -54,6 +57,11 @@ int main(int ac, char** av) {
 	    element_size = 4;
 	    is_real = false;
 	}
+	if (vm.count("uint32")) {
+	    element_size = 4;
+	    is_real = false;
+	    is_unsigned = true;
+	}
 	if (vm.count("float32")) {
 	    element_size = 4;
 	    is_real = true;
@@ -61,6 +69,11 @@ int main(int ac, char** av) {
 	if (vm.count("int16")) {
 	    element_size = 2;
 	    is_real = false;
+	}
+	if (vm.count("uint16")) {
+	    element_size = 2;
+	    is_real = false;
+	    is_unsigned = true;
 	}
 	if (vm.count("pitch")) {
 	    pitch = vm["pitch"].as<uint32_t>();
@@ -73,11 +86,17 @@ int main(int ac, char** av) {
 	    if (is_real && (element_size == 4)) {
 		MOLA::data<float> d(in_file, pitch);
 		d.save_image(out_file);
-	    } else if (!is_real && (element_size == 4)) {
+	    } else if (!is_unsigned && !is_real && (element_size == 4)) {
 		MOLA::data<int32_t> d(in_file, pitch);
 		d.save_image(out_file);
-	    } else if (!is_real && (element_size == 2)) {
+	    } else if (!is_unsigned && !is_real && (element_size == 2)) {
 		MOLA::data<int16_t> d(in_file, pitch);
+		d.save_image(out_file);
+	    } else if (is_unsigned && !is_real && (element_size == 4)) {
+		MOLA::data<uint32_t> d(in_file, pitch);
+		d.save_image(out_file);
+	    } else if (is_unsigned && !is_real && (element_size == 2)) {
+		MOLA::data<uint16_t> d(in_file, pitch);
 		d.save_image(out_file);
 	    } else {
 		throw std::runtime_error("undefined type (1)");
@@ -86,30 +105,47 @@ int main(int ac, char** av) {
 	    if (is_real && (element_size == 4)) {
 		MOLA::data<float> d(in_file, pitch);
 		win_mola_data wmd(std::make_pair(1024, 1024), &d);
-		glut_win* pwin = glut_win::instance(
+		win::glut_window* pwin = win::glut_window::instance(
 		    std::string("MOLA data view"),
 		    std::make_pair(1024, 1024),
 		    &wmd,
 		    false);
 		pwin->run();
-	    } else if (!is_real && (element_size == 4)) {
+	    } else if (!is_unsigned && !is_real && (element_size == 4)) {
 		MOLA::data<int32_t> d(in_file, pitch);
 		win_mola_data wmd(std::make_pair(1024, 1024), &d);
-		glut_win* pwin = glut_win::instance(
+		win::glut_window* pwin = win::glut_window::instance(
 		    std::string("MOLA data view"),
 		    std::make_pair(1024, 1024),
 		    &wmd,
 		    false);
 		pwin->run();
-	    } else if (!is_real && (element_size == 2)) {
+	    } else if (!is_unsigned && !is_real && (element_size == 2)) {
 		MOLA::data<int16_t> d(in_file, pitch);
 		win_mola_data wmd(std::make_pair(1024, 1024), &d);
-		glut_win* pwin = glut_win::instance(
+	        win::glut_window* pwin = win::glut_window::instance(
 		    std::string("MOLA data view"),
 		    std::make_pair(1024, 1024),
 		    &wmd,
 		    false);
 		pwin->run();
+	    } else if (is_unsigned && !is_real && (element_size == 4)) {
+		MOLA::data<uint32_t> d(in_file, pitch);
+		win_mola_data wmd(std::make_pair(1024, 1024), &d);
+	        win::glut_window* pwin = win::glut_window::instance(
+		    std::string("MOLA data view"),
+		    std::make_pair(1024, 1024),
+		    &wmd,
+		    false);
+		pwin->run();
+	    } else if (is_unsigned && !is_real && (element_size == 2)) {
+		MOLA::data<uint16_t> d(in_file, pitch);
+		win_mola_data wmd(std::make_pair(1024, 1024), &d);
+	        win::glut_window* pwin = win::glut_window::instance(
+		    std::string("MOLA data view"),
+		    std::make_pair(1024, 1024),
+		    &wmd,
+		    false);
 	    } else {
 		throw std::runtime_error("undefined type (2)");
 	    }

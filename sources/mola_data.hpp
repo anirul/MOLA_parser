@@ -9,6 +9,9 @@ namespace MOLA {
 	virtual std::vector<float> get_image_window(
 	    const std::pair<uint32_t, uint32_t>& pos,
 	    const std::pair<uint32_t, uint32_t>& win) const = 0;
+	virtual std::vector<float> get_data_window(
+	    const std::pair<uint32_t, uint32_t>& pos,
+	    const std::pair<uint32_t, uint32_t>& win) const = 0;
 	virtual std::ostream& operator<<(std::ostream& os) const = 0;
 	virtual void save_image(const std::string& name) const = 0;
     };
@@ -29,7 +32,7 @@ namespace MOLA {
 	data(const std::string& in_file, uint32_t pitch) {
 	    pitch_ = pitch;
 	    min_ = std::numeric_limits<T>::max();
-	    max_ = std::numeric_limits<T>::min();
+	    max_ = -std::numeric_limits<T>::max();
 	    FILE* file = fopen(in_file.c_str(), "rb");
 	    if (!file) 
 		throw std::runtime_error(
@@ -74,7 +77,10 @@ namespace MOLA {
 	    fclose(file);
 	    { // create the image vector
 		image_.resize(data_.size());
-		T delta = max_ - min_;
+		T delta = (float)max_ - (float)min_;
+		std::cout << "minimum         : " << (float)min_ << std::endl;
+		std::cout << "maximum         : " << (float)max_ << std::endl;
+		std::cout << "image delta     : " << (float)delta << std::endl;
 		for (int i = 0; i < pitch_; ++i) {
 		    for (int j = 0; j < (data_.size() / pitch_); ++j) {
 			image_[(pitch_ * j) + i] = 
@@ -113,11 +119,22 @@ namespace MOLA {
 	    }
 	    cv::imwrite(name.c_str(), cv_image);
 	}
+	virtual std::vector<float> get_data_window(
+	    const std::pair<uint32_t, uint32_t>& pos,
+	    const std::pair<uint32_t, uint32_t>& win) const {
+	    assert(win.first <= pitch_);
+	    assert(win.second <= (image_.size() / pitch_));
+	    std::vector<float> out;
+	    for (int i = pos.first; i < pos.first + win.first; ++i) {
+		for (int j = pos.second; j < pos.second + win.second; ++j) {
+		    out.push_back(data_[(pitch_ * j) + i]);
+		}
+	    }
+	    return out;
+	}
 	virtual std::vector<float> get_image_window(
 	    const std::pair<uint32_t, uint32_t>& pos,
 	    const std::pair<uint32_t, uint32_t>& win) const {
-	    assert(pos.first < win.first);
-	    assert(pos.second < win.second);
 	    assert(win.first <= pitch_);
 	    assert(win.second <= (image_.size() / pitch_));
 	    std::vector<float> out;

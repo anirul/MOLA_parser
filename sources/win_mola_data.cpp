@@ -15,7 +15,8 @@
 #include <opencv.hpp>
 
 #include "mola_data.hpp"
-#include "glut_win.h"
+#include "win_interface.hpp"
+#include "glut_window.h"
 #include "win_mola_data.h"
 
 win_mola_data::win_mola_data(

@@ -25,20 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WIN_MOLA_DATA_HEADER_DEFINED
-#define WIN_MOLA_DATA_HEADER_DEFINED
+#ifndef WIN_MARS_HEADER_DEFINED
+#define WIN_MARS_HEADER_DEFINED
 
-class win_mola_data : public win::interface {
+class win_mars : public win::interface {
 protected :
     std::pair<uint32_t, uint32_t> range_;
-    unsigned int texture_id_;
-    MOLA::data_interface* data_interface_;
     std::pair<uint32_t, uint32_t> pos_;
+    gl::camera<double>* camera_;
+    gl::sphere<double>* sphere_;
 public :
-    win_mola_data(
-	const std::pair<uint32_t, uint32_t>& range,
-	MOLA::data_interface* di);
-    virtual ~win_mola_data();
+    win_mars(const std::pair<uint32_t, uint32_t>& range);
+    virtual ~win_mars();
 public :
     // inherited from i_win interface
     virtual void init();
@@ -52,4 +50,4 @@ public :
     virtual void finish();
 };
 
-#endif // WIN_MOLA_DATA_HEADER_DEFINED
+#endif // WIN_MARS_HEADER_DEFINED

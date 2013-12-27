@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Frederic Dubouchet
+ * Copyright (c) 2013, Frederic Dubouchet
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,46 +25,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GLUT_WIN_HEADER_DEFINED
-#define GLUT_WIN_HEADER_DEFINED
+#include <SDL.h>
+#include <map>
+#include <string>
+#include "win_interface.hpp"
+#include "sdl2_window.h"
 
-class i_win {
-public :
-    virtual void init() = 0;
-    virtual void display() = 0;
-    virtual void idle() = 0;
-    virtual void reshape(int w, int h) = 0;
-    virtual void mouse_event(int button, int state, int x, int y) = 0;
-    virtual void mouse_move(int x, int y) = 0;
-    virtual void keyboard(unsigned char key, int x, int y) = 0;
-    virtual void special(int key, int x, int y) = 0;
-    virtual void finish() = 0;
-};
+std::map<std::string, win::sdl2_window*>* win::sdl2_window::instances_ = NULL;
 
-// window class
-class glut_win {
-    static glut_win* instance_;
-    bool fullscreen_;
-    glut_win(
-	const std::string& name,
-	const std::pair<unsigned int, unsigned int>& range,
-	i_win* windesc, 
-	bool fullscreen = false)
-	throw(std::exception);
-public :
-    i_win* pwin_;
-    static glut_win* instance(
-	const std::string& name,
-	const std::pair<unsigned int, unsigned int>& range,
-	i_win* windesc, 
-	bool fullscreen = false)
-	throw(std::exception);
-    static glut_win* instance()
-	throw(std::exception);	 
-    virtual ~glut_win();
-    void run()
-	throw(std::exception);
-};
+win::sdl2_window::sdl2_window(
+    const std::string& name,
+    const std::pair<unsigned int, unsigned int>& range,
+    win::interface* windesc,
+    bool fullscreen)
+    throw(std::exception) {
+    
+}
 
-#endif // GLUT_WIN_HEADER_DEFINED
+win::sdl2_window* win::sdl2_window::instance(
+    const std::string& name,
+    const std::pair<unsigned int, unsigned int>& range,
+    win::interface* windesc,
+    bool fullscreen) throw(std::exception) {
+    return NULL;
+}
 
+win::sdl2_window* win::sdl2_window::instance(const std::string& name) 
+    throw(std::exception) {
+    return NULL;
+}
+
+win::sdl2_window::~sdl2_window() {}
+
+void win::sdl2_window::run() throw(std::exception) {}
+
+void win::sdl2_window::set_window_display_mode(
+    const SDL_DisplayMode& mode) throw(std::exception) {}
+
+SDL_DisplayMode win::sdl2_window::get_window_display_mode() const throw(std::exception) {
+    SDL_DisplayMode sdm;
+    memset(&sdm, 0, sizeof(SDL_DisplayMode));
+    return std::move(sdm);
+}

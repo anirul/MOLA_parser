@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Frederic DUBOUCHET
+ * Copyright (c) 2012, Frederic Dubouchet
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +13,7 @@
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY Frederic DUBOUCHET ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY Frederic Dubouchet ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL Frederic DUBOUCHET BE LIABLE FOR ANY
@@ -25,31 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WIN_MOLA_DATA_HEADER_DEFINED
-#define WIN_MOLA_DATA_HEADER_DEFINED
+#ifndef WIN_INTERFACE_HEADER_DEFINED
+#define WIN_INTERFACE_HEADER_DEFINED
 
-class win_mola_data : public win::interface {
-protected :
-    std::pair<uint32_t, uint32_t> range_;
-    unsigned int texture_id_;
-    MOLA::data_interface* data_interface_;
-    std::pair<uint32_t, uint32_t> pos_;
-public :
-    win_mola_data(
-	const std::pair<uint32_t, uint32_t>& range,
-	MOLA::data_interface* di);
-    virtual ~win_mola_data();
-public :
-    // inherited from i_win interface
-    virtual void init();
-    virtual void display();
-    virtual void idle();
-    virtual void reshape(int w, int h);
-    virtual void mouse_event(int button, int state, int x, int y);
-    virtual void mouse_move(int x, int y);
-    virtual void keyboard(unsigned char key, int x, int y);
-    virtual void special(int key, int x, int y);
-    virtual void finish();
-};
+namespace win {
 
-#endif // WIN_MOLA_DATA_HEADER_DEFINED
+    class interface {
+    public :
+	virtual void init() = 0;
+	virtual void display() = 0;
+	virtual void idle() = 0;
+	virtual void reshape(int w, int h) = 0;
+	virtual void mouse_event(int button, int state, int x, int y) = 0;
+	virtual void mouse_move(int x, int y) = 0;
+	virtual void keyboard(unsigned char key, int x, int y) = 0;
+	virtual void special(int key, int x, int y) = 0;
+	virtual void finish() = 0;
+    };
+
+}
+
+#endif // WIN_INTERFACE_HEADER_DEFINED
