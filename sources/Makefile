@@ -38,7 +38,7 @@ LIBS = \
 	-lgsl -lgslcblas -lm
 endif
 
-ALL=mola_data_parser mars_sim mars_cut
+ALL=mola_data_parser mars_sim mars_cut mars_spherical_cartesian mars_map2db
 
 all: $(ALL)
 
@@ -56,6 +56,10 @@ win_mars.o : win_mars.h win_mars.cpp glut_window.h gl_object.hpp gl_camera.hpp g
 	$(CXX) -o win_mars.o -c win_mars.cpp $(CFLAGS)
 mars_cut.o : mars_cut.cpp mola_data.hpp
 	$(CXX) -o mars_cut.o -c mars_cut.cpp $(CFLAGS)
+mars_spherical_cartesian.o : mars_spherical_cartesian.cpp spherical_cartesian.hpp mola_data.hpp
+	$(CXX) -o mars_spherical_cartesian.o -c mars_spherical_cartesian.cpp $(CFLAGS)
+mars_map2db.o : mars_map2db.cpp spherical_cartesian.hpp mola_data.hpp
+	$(CXX) -o mars_map2db.o -c mars_map2db.cpp $(CFLAGS)
 
 mola_data_parser : mola_data_parser.o glut_window.o win_mola_data.o
 	$(CXX) -o mola_data_parser mola_data_parser.o glut_window.o win_mola_data.o $(LIBS)
@@ -63,6 +67,10 @@ mars_sim : glut_window.o win_mars.o mars_sim.o
 	$(CXX) -o mars_sim glut_window.o win_mars.o mars_sim.o $(LIBS)
 mars_cut : mars_cut.o
 	$(CXX) -o mars_cut mars_cut.o $(LIBS)
+mars_spherical_cartesian : mars_spherical_cartesian.o
+	$(CXX) -o mars_spherical_cartesian mars_spherical_cartesian.o $(LIBS)
+mars_map2db : mars_map2db.o
+	$(CXX) -o mars_map2db mars_map2db.o $(LIBS)
 
 clean:
-	rm -f $(ALL) *.o
+	rm -f $(ALL) *.o *~

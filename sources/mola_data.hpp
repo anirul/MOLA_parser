@@ -9,9 +9,6 @@ namespace MOLA {
 	virtual std::vector<float> get_image_window(
 	    const std::pair<uint32_t, uint32_t>& pos,
 	    const std::pair<uint32_t, uint32_t>& win) const = 0;
-	virtual std::vector<float> get_data_window(
-	    const std::pair<uint32_t, uint32_t>& pos,
-	    const std::pair<uint32_t, uint32_t>& win) const = 0;
 	virtual std::ostream& operator<<(std::ostream& os) const = 0;
 	virtual void save_image(const std::string& name) const = 0;
     };
@@ -119,12 +116,12 @@ namespace MOLA {
 	    }
 	    cv::imwrite(name.c_str(), cv_image);
 	}
-	virtual std::vector<float> get_data_window(
+	std::vector<T> get_data_window(
 	    const std::pair<uint32_t, uint32_t>& pos,
 	    const std::pair<uint32_t, uint32_t>& win) const {
 	    assert(win.first <= pitch_);
 	    assert(win.second <= (image_.size() / pitch_));
-	    std::vector<float> out;
+	    std::vector<T> out;
 	    for (int i = pos.first; i < pos.first + win.first; ++i) {
 		for (int j = pos.second; j < pos.second + win.second; ++j) {
 		    out.push_back(data_[(pitch_ * j) + i]);
