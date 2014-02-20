@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Frederic Dubouchet
+ * Copyright (c) 2014, Frederic DUBOUCHET
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,10 +13,10 @@
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY Frederic Dubouchet ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY Frederic DUBOUCHET ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL Frederic DUBOUCHET BE LIABLE FOR ANY
+ * DISCLAIMED. IN NO EVENT SHALL Frederic DUBOUCHEDT BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -25,38 +25,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WIN_GLUT_HEADER_DEFINED
-#define WIN_GLUT_HEADER_DEFINED
+#include <math.h>
+#include <utility>
 
-namespace win {
+#include "planet_vector3.h"
 
-// glut window
-    class glut_window {
-    protected :
-	static glut_window* instance_;
-	bool fullscreen_;
-	glut_window(
-	    const std::string& name,
-	    const std::pair<unsigned int, unsigned int>& range,
-	    interface* windesc, 
-	    bool fullscreen = false)
-	    throw(std::exception);
-    public :
-	interface* pwin_;
-	static glut_window* instance(
-	    const std::string& name,
-	    const std::pair<unsigned int, unsigned int>& range,
-	    interface* windesc, 
-	    bool fullscreen = false)
-	    throw(std::exception);
-	static glut_window* instance()
-	    throw(std::exception);	 
-	virtual ~glut_window();
-	void run()
-	    throw(std::exception);
-    };
-    
-} // end namespace win
+namespace planet {
 
-#endif // GLUT_WIN_HEADER_DEFINED
+    vector3 vector3_from_spherical(double theta, double phi, double radius) {
+	vector3 vec3;
+	vec3.x = radius * sin(theta) * cos(phi);
+	vec3.y = radius * sin(theta) * sin(phi);
+	vec3.z = radius * cos(theta);
+	return std::move(vec3);
+    }
 
+    double operator*(const vector3& v1, const vector3& v2) {
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    }
+
+} // end namespace planet

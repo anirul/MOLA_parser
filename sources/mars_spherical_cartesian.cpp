@@ -4,7 +4,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/program_options.hpp>
 
-#include "spherical_cartesian.hpp"
+#include "planet_vector3.h"
 
 using namespace boost::program_options;
 
@@ -50,7 +50,7 @@ int main(int ac, char** av) {
 	    radius = vm["radius"].as<double>();
 	}
 	std::cout << "radius          : " << radius << std::endl;
-	vector3 vec3 = vector3::from_spherical(radius, theta, phi);
+	planet::vector3 vec3 = planet::vector3_from_spherical(theta, phi, radius);
 	std::cout << "vec3.x          : " << vec3.x << std::endl;
 	std::cout << "vec3.y          : " << vec3.y << std::endl;
 	std::cout << "vec3.z          : " << vec3.z << std::endl;

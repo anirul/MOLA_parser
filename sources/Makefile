@@ -14,6 +14,7 @@ CFLAGS = -g -O0 -std=c++11 \
 LIBS = -L/opt/local/lib/ \
 	-framework GLUT -framework Cocoa -framework OpenGL \
 	-lSDL2 \
+	-lsqlite3 \
 	-lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_video \
 	-lboost_program_options-mt -lboost_system-mt -lboost_iostreams-mt -lboost_filesystem-mt
 endif
@@ -56,10 +57,16 @@ win_mars.o : win_mars.h win_mars.cpp glut_window.h gl_object.hpp gl_camera.hpp g
 	$(CXX) -o win_mars.o -c win_mars.cpp $(CFLAGS)
 mars_cut.o : mars_cut.cpp mola_data.hpp
 	$(CXX) -o mars_cut.o -c mars_cut.cpp $(CFLAGS)
-mars_spherical_cartesian.o : mars_spherical_cartesian.cpp spherical_cartesian.hpp mola_data.hpp
+mars_spherical_cartesian.o : mars_spherical_cartesian.cpp planet_vector3.h mola_data.hpp
 	$(CXX) -o mars_spherical_cartesian.o -c mars_spherical_cartesian.cpp $(CFLAGS)
-mars_map2db.o : mars_map2db.cpp spherical_cartesian.hpp mola_data.hpp
+mars_map2db.o : mars_map2db.cpp planet_vector3.h planet_sector.h mola_data.hpp
 	$(CXX) -o mars_map2db.o -c mars_map2db.cpp $(CFLAGS)
+planet_vector3.o : planet_vector3.h planet_vector3.cpp
+	$(CXX) -o planet_vector3.o -c planet_vector3.cpp $(CFLAGS)
+planet_sector.o : planet_sector.h planet_sector.cpp planet_vector3.h
+	$(CXX) -o planet_sector.o -c planet_sector.cpp $(CFLAGS)
+planet_db.o : planet_db.h planet_db.cpp planet_sector.h planet_vector3.h
+	$(CXX) -o planet_db.o -c planet_db.cpp $(CFLAGS)
 
 mola_data_parser : mola_data_parser.o glut_window.o win_mola_data.o
 	$(CXX) -o mola_data_parser mola_data_parser.o glut_window.o win_mola_data.o $(LIBS)
@@ -67,10 +74,10 @@ mars_sim : glut_window.o win_mars.o mars_sim.o
 	$(CXX) -o mars_sim glut_window.o win_mars.o mars_sim.o $(LIBS)
 mars_cut : mars_cut.o
 	$(CXX) -o mars_cut mars_cut.o $(LIBS)
-mars_spherical_cartesian : mars_spherical_cartesian.o
-	$(CXX) -o mars_spherical_cartesian mars_spherical_cartesian.o $(LIBS)
-mars_map2db : mars_map2db.o
-	$(CXX) -o mars_map2db mars_map2db.o $(LIBS)
+mars_spherical_cartesian : mars_spherical_cartesian.o planet_vector3.o
+	$(CXX) -o mars_spherical_cartesian mars_spherical_cartesian.o planet_vector3.o $(LIBS)
+mars_map2db : mars_map2db.o planet_db.o planet_vector3.o planet_sector.o
+	$(CXX) -o mars_map2db mars_map2db.o planet_db.o planet_vector3.o planet_sector.o $(LIBS)
 
 clean:
 	rm -f $(ALL) *.o *~

@@ -1,5 +1,6 @@
+
 /*
- * Copyright (c) 2013, Frederic Dubouchet
+ * Copyright (c) 2014, anirul
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,10 +14,10 @@
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY Frederic Dubouchet ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY anirul ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL Frederic DUBOUCHET BE LIABLE FOR ANY
+ * DISCLAIMED. IN NO EVENT SHALL Frederic DUBOUCHEDT BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -25,38 +26,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WIN_GLUT_HEADER_DEFINED
-#define WIN_GLUT_HEADER_DEFINED
+#ifndef PLANET_SECTOR_HEADER_DEFINED
+#define PLANET_SECTOR_HEADER_DEFINED
 
-namespace win {
+namespace planet {
 
-// glut window
-    class glut_window {
+    class sector_list {
     protected :
-	static glut_window* instance_;
-	bool fullscreen_;
-	glut_window(
-	    const std::string& name,
-	    const std::pair<unsigned int, unsigned int>& range,
-	    interface* windesc, 
-	    bool fullscreen = false)
-	    throw(std::exception);
+	std::vector<vector3> sector_list_;
     public :
-	interface* pwin_;
-	static glut_window* instance(
-	    const std::string& name,
-	    const std::pair<unsigned int, unsigned int>& range,
-	    interface* windesc, 
-	    bool fullscreen = false)
-	    throw(std::exception);
-	static glut_window* instance()
-	    throw(std::exception);	 
-	virtual ~glut_window();
-	void run()
-	    throw(std::exception);
+	void add_sector(const vector3& v) { sector_list_.push_back(v.normal()); }
+	size_t size() const { return sector_list_.size(); }
+	uint32_t get_closest_sector(const vector3& v) {
+	    uint32_t closest_id = 0;
+	    double closest_value = -1.0;
+	    vector3 norm_v = v.normal();
+	    for (uint32_t ite = 0; ite < size(); ++ite) {
+		double current_value = sector_list_[ite] * norm_v;
+		if (current_value > closest_value) closest_id = ite;
+	    }
+	    return closest_id;
+	}
     };
-    
-} // end namespace win
 
-#endif // GLUT_WIN_HEADER_DEFINED
+    sector_list sector_oct();
+    sector_list sector_ico();
 
+} // end namespace planet
+
+#endif // PLANET_SECTOR_HEADER_DEFINED
